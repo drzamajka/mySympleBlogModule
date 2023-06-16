@@ -32,6 +32,9 @@ class mysympleblogmodule extends Module
         }
     }
 
+    public $controllers = array(
+        'ajax' => 'MyModuleAjax',
+    );
     
     public function install()
     {
@@ -41,8 +44,6 @@ class mysympleblogmodule extends Module
 
         return (
             parent::install() 
-            // Rejestracja elementu w nagłówku css js
-            && $this->registerHook('displayHeader')
             && Configuration::updateValue('MYMODULE_NAME', 'my symple blog module')
         ); 
     }
@@ -131,10 +132,6 @@ class mysympleblogmodule extends Module
         return $helper->generateForm([$form]);
     }
 
-    public function hookDisplayHeader()
-    {
-        $this->context->controller->addCSS($this->_path.'views/css/mysympleblogmodule.css', 'all');
-        $this->context->controller->addJS($this->_path.'views/js/mysympleblogmodule.js');
-    }
+
 
 }
