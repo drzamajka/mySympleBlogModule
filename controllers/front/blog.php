@@ -1,6 +1,6 @@
 <?php
 
-class BlogController extends ModuleFrontController
+class MySympleBlogModuleblogModuleFrontController extends ModuleFrontController
 {
     public function initContent()
     {
@@ -10,6 +10,6 @@ class BlogController extends ModuleFrontController
         $this->context->smarty->assign('content', 'Witaj na stronie bloga!');
 
         // Wyświetl szablon
-        $this->setTemplate('module:mySympleBlogModule/views/templates/front/blog.tpl');
+        $this->setTemplate('module:mysympleblogmodule/views/templates/front/blog.tpl');
     }
 }

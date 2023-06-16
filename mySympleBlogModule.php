@@ -4,11 +4,11 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class mySympleBlogModule extends Module
+class mysympleblogmodule extends Module
 {
     public function __construct()
     {
-        $this->name = 'mySympleBlogModule';
+        $this->name = 'mysympleblogmodule';
         $this->tab = 'social_networks';
         $this->version = '1.0.0';
         $this->author = 'Rafał Pęczek';
@@ -18,7 +18,7 @@ class mySympleBlogModule extends Module
             'max' => '1.7.9',
         ];
         $this->bootstrap = true;
-        $this->controllers = ['BlogController'];
+        $this->controllers = ['blog'];
 
         parent::__construct();
 
@@ -34,7 +34,7 @@ class mySympleBlogModule extends Module
 
     public function install()
     {
-        return parent::install() && $this->registerHook('moduleRoutes');
+        return parent::install();
     //     if (Shop::isFeatureActive()) {
     //         Shop::setContext(Shop::CONTEXT_ALL);
     //     }
@@ -57,24 +57,24 @@ class mySympleBlogModule extends Module
         );
     }
 
-    protected function hookModuleRoutes()
-    {
-        return [
-            'module-mySympleBlogModule' => [
-                'rute' => 'blog',
-            ],
-            'controller' => 'BlogController',
-            'params' => [
-                'fc' => 'module',
-                'module' => 'mySympleBlogModule'
-            ]
-        ];
-    }
+    // protected function hookModuleRoutes()
+    // {
+    //     return [
+    //         'module-mysympleblogmodule' => [
+    //             'rute' => 'blog',
+    //         ],
+    //         'controller' => 'blog',
+    //         'params' => [
+    //             'fc' => 'module',
+    //             'module' => 'mysympleblogmodule'
+    //         ]
+    //     ];
+    // }
 
     public function hookDisplayHeader()
     {
-        $this->context->controller->addCSS($this->_path.'views/css/mySympleBlogModule.css', 'all');
-        $this->context->controller->addJS($this->_path.'views/js/mySympleBlogModule.js');
+        $this->context->controller->addCSS($this->_path.'views/css/mysympleblogmodule.css', 'all');
+        $this->context->controller->addJS($this->_path.'views/js/mysympleblogmodule.js');
     }
 
 
