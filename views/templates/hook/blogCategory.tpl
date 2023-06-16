@@ -1,0 +1,1 @@
+<a href="{$blogUrl}" class="blog-button">Blog</a>

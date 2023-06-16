@@ -10,7 +10,7 @@ class mysympleblogmodule extends Module
     {
         $this->name = 'mysympleblogmodule';
         $this->tab = 'social_networks';
-        $this->version = '1.0.0';
+        $this->version = '1.1.0';
         $this->author = 'Rafał Pęczek';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = [
@@ -32,20 +32,19 @@ class mysympleblogmodule extends Module
         }
     }
 
+    
     public function install()
     {
-        return parent::install();
-    //     if (Shop::isFeatureActive()) {
-    //         Shop::setContext(Shop::CONTEXT_ALL);
-    //     }
+        if (Shop::isFeatureActive()) {
+            Shop::setContext(Shop::CONTEXT_ALL);
+        }
 
-    // return (
-    //         parent::install() 
-    //         && $this->registerHook('moduleRoutes')
-    //         // Rejestracja elementu w nagłówku css js
-    //         && $this->registerHook('displayHeader')
-    //         && Configuration::updateValue('MYMODULE_NAME', 'my symple blog module')
-    //     ); 
+        return (
+            parent::install() 
+            // Rejestracja elementu w nagłówku css js
+            && $this->registerHook('displayHeader')
+            && Configuration::updateValue('MYMODULE_NAME', 'my symple blog module')
+        ); 
     }
 
 
@@ -57,25 +56,85 @@ class mysympleblogmodule extends Module
         );
     }
 
-    // protected function hookModuleRoutes()
-    // {
-    //     return [
-    //         'module-mysympleblogmodule' => [
-    //             'rute' => 'blog',
-    //         ],
-    //         'controller' => 'blog',
-    //         'params' => [
-    //             'fc' => 'module',
-    //             'module' => 'mysympleblogmodule'
-    //         ]
-    //     ];
-    // }
+        /**
+     * This method handles the module's configuration page
+     * @return string The page's HTML content 
+     */
+    public function getContent()
+    {
+        $output = '';
+
+        // this part is executed only when the form is submitted
+        if (Tools::isSubmit('submit' . $this->name)) {
+            // retrieve the value set by the user
+            $configValue = (string) Tools::getValue('BLOG_CONFIG');
+
+            // check that the value is valid
+            if (empty($configValue) || !Validate::isGenericName($configValue)) {
+                // invalid value, show an error
+                $output = $this->displayError($this->l('Invalid Configuration value'));
+            } else {
+                // value is ok, update it and display a confirmation message
+                Configuration::updateValue('BLOG_CONFIG', $configValue);
+                $output = $this->displayConfirmation($this->l('Settings updated'));
+            }
+        }
+
+        // display any message, then the form
+        return $output . $this->displayForm();
+    }
+
+
+    /**
+     * Builds the configuration form
+     * @return string HTML code
+     */
+    public function displayForm()
+    {
+        // Init Fields form array
+        $form = [
+            'form' => [
+                'legend' => [
+                    'title' => $this->l('Settings'),
+                ],
+                'input' => [
+                    [
+                        'type' => 'text',
+                        'label' => $this->l('configure the blog message:'),
+                        'name' => 'BLOG_CONFIG',
+                        'size' => 20,
+                        'required' => true,
+                    ],
+                ],
+                'submit' => [
+                    'title' => $this->l('Save'),
+                    'class' => 'btn btn-default pull-right',
+                ],
+            ],
+        ];
+
+        $helper = new HelperForm();
+
+        // Module, token and currentIndex
+        $helper->table = $this->table;
+        $helper->name_controller = $this->name;
+        $helper->token = Tools::getAdminTokenLite('AdminModules');
+        $helper->currentIndex = AdminController::$currentIndex . '&' . http_build_query(['configure' => $this->name]);
+        $helper->submit_action = 'submit' . $this->name;
+
+        // Default language
+        $helper->default_form_language = (int) Configuration::get('PS_LANG_DEFAULT');
+
+        // Load current value into the form
+        $helper->fields_value['BLOG_CONFIG'] = Tools::getValue('BLOG_CONFIG', Configuration::get('BLOG_CONFIG'));
+
+        return $helper->generateForm([$form]);
+    }
 
     public function hookDisplayHeader()
     {
         $this->context->controller->addCSS($this->_path.'views/css/mysympleblogmodule.css', 'all');
         $this->context->controller->addJS($this->_path.'views/js/mysympleblogmodule.js');
     }
-
 
 }

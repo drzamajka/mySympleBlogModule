@@ -6,8 +6,11 @@ class MySympleBlogModuleblogModuleFrontController extends ModuleFrontController
     {
         parent::initContent();
 
+        // Pobranie wiadomości bloga
+        $customHtmlContent = Configuration::get('BLOG_CONFIG');
+
         // Przykład: Ustawienie zmiennej smarty z treścią dla szablonu
-        $this->context->smarty->assign('content', 'Witaj na stronie bloga!');
+        $this->context->smarty->assign('content', $customHtmlContent);
 
         // Wyświetl szablon
         $this->setTemplate('module:mysympleblogmodule/views/templates/front/blog.tpl');
