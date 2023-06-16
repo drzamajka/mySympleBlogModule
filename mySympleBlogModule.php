@@ -18,6 +18,7 @@ class mySympleBlogModule extends Module
             'max' => '1.7.9',
         ];
         $this->bootstrap = true;
+        $this->controllers = ['BlogController'];
 
         parent::__construct();
 
@@ -33,37 +34,20 @@ class mySympleBlogModule extends Module
 
     public function install()
     {
-        if (Shop::isFeatureActive()) {
-            Shop::setContext(Shop::CONTEXT_ALL);
-        }
-
-    return (
-            parent::install() 
-            && $this->registerModuleRoute('yourmodule', 'yourmodulecontroller', array(
-                'controller' => 'controller_name',
-                'module' => $this->name,
-                'ssl' => true,
-            ))
-            && $this->registerHook('displayHeader')
-            && Configuration::updateValue('MYMODULE_NAME', 'my symple blog module')
-        ); 
-    }
-
-    // public function install()
-    // {
-    //     if (!parent::install() || !$this->registerHook('displayHeader')) {
-    //         return false;
+        return parent::install() && $this->registerHook('moduleRoutes');
+    //     if (Shop::isFeatureActive()) {
+    //         Shop::setContext(Shop::CONTEXT_ALL);
     //     }
 
-    //     // Rejestracja niestandardowej trasy
-    //     $this->registerModuleRoute('yourmodule-blog', 'yourmoduleblog', array(
-    //         'controller' => 'Blog',
-    //         'module' => $this->name,
-    //         'ssl' => true,
-    //     ));
+    // return (
+    //         parent::install() 
+    //         && $this->registerHook('moduleRoutes')
+    //         // Rejestracja elementu w nagłówku css js
+    //         && $this->registerHook('displayHeader')
+    //         && Configuration::updateValue('MYMODULE_NAME', 'my symple blog module')
+    //     ); 
+    }
 
-    //     return true;
-    // }
 
     public function uninstall()
     {
@@ -71,6 +55,26 @@ class mySympleBlogModule extends Module
             parent::uninstall() 
             && Configuration::deleteByName('MYMODULE_NAME')
         );
+    }
+
+    protected function hookModuleRoutes()
+    {
+        return [
+            'module-mySympleBlogModule' => [
+                'rute' => 'blog',
+            ],
+            'controller' => 'BlogController',
+            'params' => [
+                'fc' => 'module',
+                'module' => 'mySympleBlogModule'
+            ]
+        ];
+    }
+
+    public function hookDisplayHeader()
+    {
+        $this->context->controller->addCSS($this->_path.'views/css/mySympleBlogModule.css', 'all');
+        $this->context->controller->addJS($this->_path.'views/js/mySympleBlogModule.js');
     }
 
 
